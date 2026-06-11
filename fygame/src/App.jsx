@@ -4,6 +4,8 @@ import './App.css';
 import ViewSolicitarRecomendacao from './views/solicitarRecomendacao';
 import ViewLogin from './views/Login';
 import ViewCadastro from './views/Cadastro';
+import ViewJogoRecomendado from './views/jogoRecomendado';
+import { GerarRecomendacao } from './services/GerarRecomendacao';
 
 function App() {
   // Verifica se já existe sessão salva no localStorage
@@ -12,7 +14,17 @@ function App() {
   const [tela, setTela] = useState(usuarioSalvo ? 'app' : 'login');
   const [usuario, setUsuario] = useState(usuarioSalvo);
   const [jogos, setJogos] = useState({ jogo1: '', jogo2: '', jogo3: '' });
+  const [dadosRecomendacao, setDadosRecomendacao] = useState({
+    Titulo: '',
+    Genero: '',
+    Descricao: '',
+    Motivo: '',
+    Link: '',
+    LinkImagem: ''
+  });
+  const [carregando, setCarregando] = useState(false);
 
+  //Login, Cadastro e Logout
   function handleLogin(user) {
     setUsuario(user);
     setTela('app');
@@ -27,14 +39,6 @@ function App() {
     localStorage.removeItem('fygame_logado');
     setUsuario(null);
     setTela('login');
-  }
-
-  function enviarForm(event) {
-    event.preventDefault();
-    console.log('Jogos informados:');
-    console.log('Jogo 1:', jogos.jogo1);
-    console.log('Jogo 2:', jogos.jogo2);
-    console.log('Jogo 3:', jogos.jogo3);
   }
 
   if (tela === 'login') {
@@ -55,6 +59,30 @@ function App() {
     );
   }
 
+  if (tela === 'solicitarRecomendacao') {
+    return (
+      <ViewSolicitarRecomendacao
+        ProcessarRecomendacao={ProcessarRecomendacao}
+        salvarInput={salvarInput}
+      />
+    );
+  }
+
+  if (tela === 'jogoRecomendado') {
+    return (
+      <ViewJogoRecomendado
+        Titulo={dadosRecomendacao.Titulo}
+        Genero={dadosRecomendacao.Genero}
+        Descricao={dadosRecomendacao.Descricao}
+        Motivo={dadosRecomendacao.Motivo}
+        Link={dadosRecomendacao.Link}
+        LinkImagem={dadosRecomendacao.LinkImagem}
+        usuario={usuario}
+        handleLogout={handleLogout}
+      />
+    );
+  }
+
   //Registra os valores do input no campo correspondente em 'jogos'
   const salvarInput = (e) => {
     const { name, value } = e.target; //name é o name do input && value é o value do input
@@ -65,21 +93,43 @@ function App() {
     }));
   }
 
-  function GerarRecomendacao(event) {
-    //Gerar recomendação com os jogos informados
+  async function ProcessarRecomendacao(event) {
     event.preventDefault();
 
-    console.log('Jogos informados:');
-    /*
-    console.log('Jogo 1:', jogos.jogo1);
-    console.log('Jogo 2:', jogos.jogo2);
-    console.log('Jogo 3:', jogos.jogo3);
-    */
-    console.log('Jogos: ', jogos);
-  }
+    console.log("Botão clicado");
+    const inicio = performance.now();
+    const irParaJogoRecomendado = () => setTela('jogoRecomendado');
+    
+    try {
+        setCarregando(true);
+        const apiResposta = await GerarRecomendacao(
+            jogos.jogo1,
+            jogos.jogo2,
+            jogos.jogo3
+        );
+
+        const fim = performance.now();
+        console.log(`Tempo de resposta: ${((fim - inicio) / 1000).toFixed(2)} segundos`);
+
+        setDadosRecomendacao(apiResposta);
+        irParaJogoRecomendado();
+    } catch (erro) {
+        console.error(erro);
+        setDadosRecomendacao({
+            Titulo: 'Erro',
+            Genero: '',
+            Descricao: 'Erro ao gerar recomendação.',
+            Motivo: '',
+            Link: '',
+            LinkImagem: ''
+        });
+    } finally {
+        setCarregando(false);
+    }
+}
 
   return (
-    <div>
+    <>
       <header className="app-header">
         <div className="app-header-logo">
           <span>🎮</span> FyGame
@@ -91,8 +141,23 @@ function App() {
           </button>
         </div>
       </header>
-      <ViewSolicitarRecomendacao enviarForm={enviarForm} />
-    </div>
+
+      {carregando && (
+          <div className="loading-overlay">
+              <div className="loading-card">
+                  <div className="loading-spinner"></div>
+
+                  <h2>Gerando recomendação...</h2>
+
+                  <p>
+                      A IA está procurando o jogo ideal para você.
+                  </p>
+              </div>
+          </div>
+      )}
+
+      <ViewSolicitarRecomendacao ProcessarRecomendacao={ProcessarRecomendacao} salvarInput={salvarInput} /*irParaJogoRecomendado={() => setTela('jogoRecomendado')}*/ />
+    </>
   );
 }
 
