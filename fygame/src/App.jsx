@@ -79,6 +79,7 @@ function App() {
         LinkImagem={dadosRecomendacao.LinkImagem}
         usuario={usuario}
         handleLogout={handleLogout}
+        irParaRecomendacao={() => setTela('solicitarRecomendado')}
       />
     );
   }

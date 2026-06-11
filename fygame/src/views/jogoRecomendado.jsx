@@ -64,6 +64,7 @@ function ViewJogoRecomendado(props) {
                 >
                     Ver jogo
                 </a>
+                <button className="voltar" onClick={props.irParaRecomendacao}>voltar</button>
             </div>
 
         </div>

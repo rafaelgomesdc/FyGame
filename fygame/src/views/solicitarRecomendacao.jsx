@@ -20,6 +20,7 @@ function ViewSolicitarRecomendacao(props) {
                             name="jogo1"
                             placeholder="Ex: Minecraft"
                             onChange={props.salvarInput}
+                            required
                         />
                     </div>
 
@@ -30,6 +31,7 @@ function ViewSolicitarRecomendacao(props) {
                             name="jogo2"
                             placeholder="Ex: Terraria"
                             onChange={props.salvarInput}
+                            required
                         />
                     </div>
 
@@ -40,6 +42,7 @@ function ViewSolicitarRecomendacao(props) {
                             name="jogo3"
                             placeholder="Ex: Stardew Valley"
                             onChange={props.salvarInput}
+                            required
                         />
                     </div>
 
