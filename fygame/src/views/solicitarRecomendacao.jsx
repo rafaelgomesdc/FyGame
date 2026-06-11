@@ -6,7 +6,7 @@ function ViewSolicitarRecomendacao() {
                 <input type="text" name="jogo1"/>
                 <input type="text" name="jogo2"/>
                 <input type="text" name="jogo3"/>
-                <button type="button" onClick={}>confirmar</button>
+                <button type="button">confirmar</button>
             </form>
         </div>
     )
