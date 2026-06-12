@@ -41,6 +41,16 @@ function App() {
     setTela('login');
   }
 
+  //Registra os valores do input no campo correspondente em 'jogos'
+  const salvarInput = (e) => {
+    const { name, value } = e.target; //name é o name do input && value é o value do input
+
+    setJogos((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
   if (tela === 'login') {
     return (
       <ViewLogin
@@ -82,16 +92,6 @@ function App() {
         irParaRecomendacao={() => setTela('solicitarRecomendado')}
       />
     );
-  }
-
-  //Registra os valores do input no campo correspondente em 'jogos'
-  const salvarInput = (e) => {
-    const { name, value } = e.target; //name é o name do input && value é o value do input
-
-    setJogos((prev) => ({
-      ...prev,
-      [name]: value
-    }));
   }
 
   async function ProcessarRecomendacao(event) {
@@ -157,7 +157,7 @@ function App() {
           </div>
       )}
 
-      <ViewSolicitarRecomendacao ProcessarRecomendacao={ProcessarRecomendacao} salvarInput={salvarInput} /*irParaJogoRecomendado={() => setTela('jogoRecomendado')}*/ />
+      <ViewSolicitarRecomendacao ProcessarRecomendacao={ProcessarRecomendacao} salvarInput={salvarInput} />
     </>
   );
 }
